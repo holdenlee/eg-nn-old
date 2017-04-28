@@ -11,7 +11,7 @@ See also [David Parks's implementation](https://github.com/davidparks21/experime
 ```
 opter = MWOptimizer(Ws, bs, learning_rate=lr, smoothing=smoothing)
 ```
-Here Ws are the weight parameters (dimensions li*n), bs are the bias parameters (dimensions 2n, because they include both the positive and negative bias terms).
+Here Ws are the weight parameters (dimensions `li*n`), bs are the bias parameters (dimensions `2n`, because they include both the positive and negative bias terms).
 
 # Notes
 
