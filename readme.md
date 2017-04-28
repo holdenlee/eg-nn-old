@@ -21,6 +21,8 @@ Here Ws are the weight parameters (dimensions li*n), bs are the bias parameters 
 # Future work
 
 * Can we make EG more competitive against regular GD? Why is it not doing as well?
+	* Learning rate schedule.
+	* Look at evolution of weights.
 * Optimize part of network with EG, part with SGD? Which part is more suitable for EG?
 * Try smoothing, sleeping.
     * Try domain adaptation. Does this help solve the catastrophic forgetting problem?
