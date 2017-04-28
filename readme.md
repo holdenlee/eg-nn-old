@@ -27,4 +27,6 @@ Here Ws are the weight parameters (dimensions li*n), bs are the bias parameters 
 * Try smoothing, sleeping.
     * Try domain adaptation. Does this help solve the catastrophic forgetting problem?
 * More sophisticated optimization algorithms (ex. with momentum).
+* How does this do against adversarial examples?
+* Relate to path norm (the product of u's is like the path norm, but not quite because we look at the $L^1$ norm of the filters rather than $L^2$ norm).
 
