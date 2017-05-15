@@ -17,8 +17,11 @@ def get_data_mnist(label_smooth=0, testing='F'):
         Y_train = Y_train[1:256]
     return X_train, Y_train, X_test, Y_test
 
-def get_bf_mnist(label_smooth=0, testing='F'):
+def get_bf_mnist(label_smooth=0, testing='F', normalize=False):
     X_train, Y_train, X_test, Y_test = get_data_mnist(label_smooth, testing)
+    if normalize:
+        X_train = 2*X_train-1
+        X_test = 2*X_test-1
     train_data = make_batch_feeder({'x': X_train, 'y':Y_train})
     test_data = make_batch_feeder({'x': X_test, 'y':Y_test})
     return train_data, test_data
