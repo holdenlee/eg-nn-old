@@ -1,5 +1,6 @@
 import tensorflow as tf
 from tf_utils.tf_utils import *
+from tf_utils.tf_vars import *
 
 def rand_orth(m,n):
     a = np.random.normal(0.0, 1.0, (m,n))
@@ -11,28 +12,28 @@ def rand_orth(m,n):
 
 def lip_conv_layer(x, f2, dims=None, la=1, name='lip', strides = (1,1), f = tf.nn.relu):
     #NOTE: x should be (batch_size * filters * w * h) rather than the usual (batch_size * w * h * filters)
-    [b,f1,w,h] = map(int, x.get_shape())
+    [f1,w,h] = map(int, x.get_shape()[1:])
     # x : b * f * w * h
     # do FFT
     xhat = tf.fft2d(x)
     # xhat : b * f * w * h
     # reshape
-    xc = tf.reshape(xhat, [b, f1, 1, w*h])
+    xc = tf.reshape(xhat, [-1, f1, 1, w*h])
     # xc : b * f * 1 * wh
     xt = tf.transpose(xc, perm=[0, 3, 2, 1])
     # xt : b * wh * 1 * f
     d = min(f1, f2)
     # ? Is this along rows or columns?
     # we want a stack of these!
-    U_init = np.asarray([rand_orth(f1,d) for i in range(w*h)], dtype=complex64)
+    U_init = np.asarray([rand_orth(f1,d) for i in range(w*h)], dtype=np.complex64)
     U = get_scope_variable('U', scope_name=name, shape=[w*h, f1, d], initializer = U_init)
     diag = get_scope_variable('d', scope_name=name, shape=[w*h, d], initializer = tf.ones_initializer(dtype=tf.complex64))
     D = tf.map_fn(tf.diag, diag)
-    V_init = np.asarray([rand_orth(d,f2) for i in range(w*h)], dtype=complex64)
+    V_init = np.asarray([rand_orth(d,f2) for i in range(w*h)], dtype=np.complex64)
     V = get_scope_variable('V', scope_name=name, shape=[w*h, d, f2], initializer = V_init)
     yt = tf.matmul(tf.matmul(tf.matmul(xt, U), D), V)
     # yt : b * wh * 1 * f2
-    yt2 = tf.reshape(yt, [b, w, h, f2])
+    yt2 = tf.reshape(yt, [-1, w, h, f2])
     # yt2 : b * w * h * f2
     yhat = tf.transpose(yt2, [0, 3, 1, 2])
     # yhat : b * f2 * w * h
@@ -48,16 +49,16 @@ def lip_conv_layer(x, f2, dims=None, la=1, name='lip', strides = (1,1), f = tf.n
 
 def lip_linear_layer(x, f2, la=1, name='lip', f = lambda x: x):
     #NOTE: x should be (batch_size * filters * w * h) rather than the usual (batch_size * w * h * filters)
-    [b,f1] = map(int, x.get_shape())
+    f1 = int(x.get_shape()[1])
     # x : b * f
     d = min(f1, f2)
     # ? Is this along rows or columns?
     # we want a stack of these!
-    U_init = np.astype(rand_orth(f1,d), complex64)
+    U_init = np.astype(rand_orth(f1,d), np.complex64)
     U = get_scope_variable('U', scope_name=name, shape=[f1, d], initializer = U_init)
     diag = get_scope_variable('d', scope_name=name, shape=[d], initializer = tf.ones_initializer(dtype=tf.complex64))
     D = tf.diag(diag)
-    V_init = np.astype(rand_orth(d, f2), complex64)
+    V_init = np.astype(rand_orth(d, f2), np.complex64)
     V = get_scope_variable('V', scope_name=name, shape=[d, f2], initializer = V_init)
     yt = tf.real(tf.matmul(tf.matmul(tf.matmul(xt, U), D), V))
     # yt : b * f2
@@ -68,7 +69,7 @@ def lip_linear_layer(x, f2, la=1, name='lip', f = lambda x: x):
     return y
                   
 
-def make_model_from_logits_lip(model)
+def make_model_from_logits_lip(model):
     def m(x,y):
         predictions = model(x)
         loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=predictions), name = 'loss')

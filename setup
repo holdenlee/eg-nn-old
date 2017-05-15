@@ -1,8 +1,8 @@
 #!/bin/bash
 
 mkdir results
-virtualenv mwu
-source mwu/bin/activate
+virtualenv ~/mwu
+source ~/mwu/bin/activate
 pip install tensorflow
 pip install keras
 pip install -e git+http://github.com/openai/cleverhans.git#egg=cleverhans
