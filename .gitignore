@@ -46,3 +46,8 @@ cifar10_basic
 cifar10_mwu_train_with_decay
 cifar10_train_with_decay
 __pycache__
+mwu/bin
+mwu/lib
+mwu/man
+mwu/src
+mwu/pip-selfcheck.json
