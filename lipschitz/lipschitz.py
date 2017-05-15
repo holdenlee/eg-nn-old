@@ -26,12 +26,15 @@ def lip_conv_layer(x, f2, dims=None, la=1, name='lip', strides = (1,1), f = tf.n
     # ? Is this along rows or columns?
     # we want a stack of these!
     U_init = np.asarray([rand_orth(f1,d) for i in range(w*h)], dtype=np.complex64)
-    U = get_scope_variable('U', scope_name=name, shape=[w*h, f1, d], initializer = U_init)
+    U = get_scope_variable('U', scope_name=name, initializer = U_init, dtype=tf.complex64) # , shape=[w*h, f1, d]
     diag = get_scope_variable('d', scope_name=name, shape=[w*h, d], initializer = tf.ones_initializer(dtype=tf.complex64))
     D = tf.map_fn(tf.diag, diag)
     V_init = np.asarray([rand_orth(d,f2) for i in range(w*h)], dtype=np.complex64)
-    V = get_scope_variable('V', scope_name=name, shape=[w*h, d, f2], initializer = V_init)
-    yt = tf.matmul(tf.matmul(tf.matmul(xt, U), D), V)
+    V = get_scope_variable('V', scope_name=name, initializer = V_init, dtype=tf.complex64) # , shape=[w*h, d, f2]
+    Ur = tf.reshape(U, [1,w*h,f1,d])
+    Dr = tf.reshape(D, [1,w*h,d,d])
+    Vr = tf.reshape(V, [1,w*h,d,f2])
+    yt = tf.matmul(tf.matmul(tf.matmul(xt, Ur), Dr), Vr)
     # yt : b * wh * 1 * f2
     yt2 = tf.reshape(yt, [-1, w, h, f2])
     # yt2 : b * w * h * f2
@@ -55,12 +58,15 @@ def lip_linear_layer(x, f2, la=1, name='lip', f = lambda x: x):
     # ? Is this along rows or columns?
     # we want a stack of these!
     U_init = np.astype(rand_orth(f1,d), np.complex64)
-    U = get_scope_variable('U', scope_name=name, shape=[f1, d], initializer = U_init)
+    U = get_scope_variable('U', scope_name=name, initializer = U_init) # , shape=[f1, d]
     diag = get_scope_variable('d', scope_name=name, shape=[d], initializer = tf.ones_initializer(dtype=tf.complex64))
     D = tf.diag(diag)
     V_init = np.astype(rand_orth(d, f2), np.complex64)
-    V = get_scope_variable('V', scope_name=name, shape=[d, f2], initializer = V_init)
-    yt = tf.real(tf.matmul(tf.matmul(tf.matmul(xt, U), D), V))
+    V = get_scope_variable('V', scope_name=name, initializer = V_init) # , shape=[d, f2]
+    Ur = tf.reshape(U, [1,f1,d])
+    Dr = tf.reshape(D, [1,d,d])
+    Vr = tf.reshape(V, [1,d,f2])
+    yt = tf.real(tf.matmul(tf.matmul(tf.matmul(xt, Ur), Dr), Vr))
     # yt : b * f2
     y = f(yt)
     orth_loss = la * (tf.l2loss(tf.matmul(U, tf.conj(tf.transpose(U))) - tf.eye(d)) + 
