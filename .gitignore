@@ -41,3 +41,6 @@ elm-stuff
 bower_components
 dist
 output
+
+cifar10_basic
+__pycache__

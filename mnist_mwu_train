@@ -1,0 +1,4 @@
+#!/bin/bash
+
+mkdir results/mnist_mwu_train
+nohup python ./mnist_mwu_train.py > results/mnist_mwu_train/log.txt 2>&1 &

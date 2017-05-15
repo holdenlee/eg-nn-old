@@ -1,0 +1,4 @@
+#!/bin/bash
+
+mkdir results/mnist_adv_mwu_ep0.3
+nohup python ./mnist_adv_mwu_train.py --train_dir=results/mnist_adv_mwu_ep0.3 --learning_rate=0.1 --u=20 --u2=20 > results/mnist_adv_mwu_ep0.3/log.txt 2>&1 &

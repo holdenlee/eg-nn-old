@@ -1,0 +1,4 @@
+#!/bin/bash
+
+mkdir results/mnist_adv_train_ep0.3
+nohup python ./mnist_adv_train.py --train_dir=results/mnist_adv_train_ep0.3/ --max_steps=3600 --epsilon=0.3 > results/mnist_adv_train_ep0.3/log.txt 2>&1 &
