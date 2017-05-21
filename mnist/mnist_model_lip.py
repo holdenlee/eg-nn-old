@@ -2,11 +2,11 @@ from lipschitz.lipschitz import *
 import tensorflow as tf
 
 def mnist_model_lip(x):
-    x = tf.transpose(x, [0,2,3,1])
+    x = tf.transpose(x, [0,3,1,2])
     #NOTE: x should be (batch_size * filters * w * h) rather than the usual (batch_size * w * h * filters)
-    print("x",x,x.get_shape())
-    x = tf.cast(x, tf.complex64) #error...
-    print("x",x)
+    #print("x",x,x.get_shape())
+    #x = tf.cast(x, tf.complex64)
+    #print("x",x)
     y1 = lip_conv_layer(x, 64, la=1, strides=(2,2), name='1') # same
     y2 = lip_conv_layer(y1, 128, la=1, strides=(2,2), name='2') #valid 
     y3 = lip_conv_layer(y2, 128, la=1, name='3') 
