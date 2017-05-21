@@ -136,6 +136,7 @@ def dirichlet_initializer(dims,n):
 
 def mwu_linear_layer(x, n, u=50, name='fc'):
     pm_x = pm(x)
+    #print("linear:", pm_x, pm_x.get_shape())
     dim = int(pm_x.get_shape()[-1])
     #print('dim', dim)
     W0,b0 = dirichlet_initializer([dim],n)

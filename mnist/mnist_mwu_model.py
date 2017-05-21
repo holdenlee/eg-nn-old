@@ -46,9 +46,9 @@ def mnist_mwu_model(u=50,u2=50):
         #print('3:'+str(tf.shape(y3)))
         #print('3:'+str(y3.get_shape()))
         dim = tf.reduce_prod(tf.shape(y3)[1:])
-        yf = tf.reshape(y3, [-1, dim])
+        #yf = tf.reshape(y3, [-1, dim])
         #http://stackoverflow.com/questions/36668542/flatten-batch-in-tensorflow
-        #yf = tf.contrib.layers.flatten(y3)
+        yf = tf.contrib.layers.flatten(y3)
         y4, W4, b4 = mwu_linear_layer(yf, 10, name='4', u=u2)
         y = tf.nn.softmax(y4)
         return y
